@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.0"
+ creator="SeeYou 4.0 - http://naviter.com"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="http://www.topografix.com/GPX/1/0"
+ xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+  <time>2019-07-31T13:30:49Z</time>
+  <bounds minlat="50.13770" minlon="-122.99400" maxlat="50.35020" maxlon="-122.75329"/>
+  <wpt lat="50.35020" lon="-122.78509">
+    <ele>891</ele>
+    <name>a</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.29510" lon="-122.87529">
+    <ele>1362</ele>
+    <name>b</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.29030" lon="-122.92300">
+    <ele>1101</ele>
+    <name>c</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.29770" lon="-122.94040">
+    <ele>1439</ele>
+    <name>d</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.27760" lon="-122.99400">
+    <ele>928</ele>
+    <name>e</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.26530" lon="-122.98579">
+    <ele>1712</ele>
+    <name>f</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.26350" lon="-122.93929">
+    <ele>1562</ele>
+    <name>g</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.25750" lon="-122.95440">
+    <ele>1669</ele>
+    <name>h</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.20210" lon="-122.95500">
+    <ele>956</ele>
+    <name>i</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.19360" lon="-122.98820">
+    <ele>1397</ele>
+    <name>j</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.15520" lon="-122.99051">
+    <ele>1304</ele>
+    <name>k</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.14630" lon="-122.95980">
+    <ele>649</ele>
+    <name>l</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.13770" lon="-122.91920">
+    <ele>987</ele>
+    <name>m</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.16190" lon="-122.89180">
+    <ele>684</ele>
+    <name>n</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.17940" lon="-122.84090">
+    <ele>1514</ele>
+    <name>o</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.20360" lon="-122.82890">
+    <ele>1624</ele>
+    <name>p</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.21770" lon="-122.82890">
+    <ele>1381</ele>
+    <name>q</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.22850" lon="-122.82210">
+    <ele>1497</ele>
+    <name>r</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.24640" lon="-122.81880">
+    <ele>1585</ele>
+    <name>s</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.26130" lon="-122.81761">
+    <ele>1608</ele>
+    <name>t</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+  <wpt lat="50.27690" lon="-122.75329">
+    <ele>1163</ele>
+    <name>u</name>
+    <sym>Normal</sym>
+    <type>Normal</type>
+  </wpt>
+</gpx>
