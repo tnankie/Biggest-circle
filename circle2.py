@@ -160,29 +160,39 @@ with open("ex3_sim.cup",'r') as test:
     coords = []
     count = 0
     for line in test:
+        if re.search("\d{4}.*W",line) != None:
+            keep = re.search("\d{4}.*W",line)
+            keep = keep.group()
+            print(keep)
+            print(keep[0:2],keep[2:8],keep[10:13], keep[13:19])
+            keep = [int(keep[0:2])+float(keep[2:8])/60,int(keep[10:13])+float(keep[13:19])/60]
+            print(keep)
+            coords.append(keep)
+
         
-        if len(line) >24:
-            if count < 50:
-                print(line[0])
-                print('v check ', line[24])
-                print('coord check ', line[7:24])
-            if line[0] == 'B':
-                if line[24] =='A':
-                    coords.append(line[7:24])
-                    if count < 50:
-                        print('wrote')
+        
+##        if len(line) >24:
+##            if count < 50:
+##                print(line[0])
+##                print('v check ', line[24])
+##                print('coord check ', line[7:24])
+##            if line[0] == 'B':
+##                if line[24] =='A':
+##                    coords.append(line[7:24])
+##                    if count < 50:
+##                        print('wrote')
         count = count +1
     print(len(coords))
     
     cleaned = []
     for line in coords:
-        filler = [float(line[0:7])/100000,float(line[8:16])/100000]
-        cleaned.append(filler)
+        
+        cleaned.append(line)
     print(len(cleaned))
-    print('coords ', coords[49])
-    print('cleaned ', cleaned[49])
+    print('coords ', coords[5])
+    print('cleaned ', cleaned[5])
     cleaned.append(cleaned[-1])
     print(len(cleaned))
-##    print(polylabel([cleaned]))
+    print(polylabel([cleaned]))
     print('done')
     
