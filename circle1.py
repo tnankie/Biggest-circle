@@ -1,11 +1,39 @@
 import os
 print(os.getcwd())
 print(os.listdir())
-       
+import re       
 from math import sqrt
 import time
 from queue import PriorityQueue
 from math import inf
+import matplotlib.pyplot as plt
+import numpy as np
+from math import pi
+
+def is_left(P0, P1, P2):
+    return (P1[0] - P0[0]) * (P2[1] - P0[1]) - (P2[0] - P0[0]) * (P1[1] - P0[1])
+
+def wn_PnPoly(P, V):
+    wn = 0   # the winding number counter
+
+    # repeat the first vertex at end
+##    V = tuple(V[:]) + (V[0],)
+
+    # loop through all edges of the polygon
+    for i in range(len(V)-1):     # edge from V[i] to V[i+1]
+        if V[i][1] <= P[1]:        # start y <= P[1]
+            if V[i+1][1] > P[1]:     # an upward crossing
+                if is_left(V[i], V[i+1], P) > 0: # P left of edge
+                    wn += 1           # have a valid up intersect
+        else:                      # start y > P[1] (no test needed)
+            if V[i+1][1] <= P[1]:    # a downward crossing
+                if is_left(V[i], V[i+1], P) < 0: # P right of edge
+                    wn -= 1           # have a valid down intersect
+    print('point is ', P)
+    
+    print('wn is ', wn)
+
+    return wn
 
 
 
@@ -17,14 +45,18 @@ def _point_to_polygon_distance(x, y, polygon):
         b = ring[-1]
         for a in ring:
 
-            if ((a[1] > y) != (b[1] > y) and
-                    (x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0])):
-                inside = not inside
-
+##            if ((a[1] > y) != (b[1] > y) and
+##                    (x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0])):
+##                inside = not inside
+            
+            
             min_dist_sq = min(min_dist_sq, _get_seg_dist_sq(x, y, a, b))
             b = a
 
     result = sqrt(min_dist_sq)
+    point = [x,y]
+    if wn_PnPoly(point,polygon) == 0:
+                inside = not inside
     if not inside:
         return -result
     return result
@@ -81,7 +113,7 @@ def _get_centroid_cell(polygon):
     pass
 
 
-def polylabel(polygon, precision=1.0, debug=False):
+def polylabel(polygon, precision=.1, debug=False):
     # find bounding box
     first_item = polygon[0][0]
     min_x = first_item[0]
@@ -155,7 +187,7 @@ def polylabel(polygon, precision=1.0, debug=False):
     bradius = _point_to_polygon_distance(best_cell.x, best_cell.y, polygon)
     return [best_cell.x, best_cell.y, bradius]
 
-with open("example3.igc",'r') as test:
+with open("example4.igc",'r') as test:
     coords = []
     count = 0
     for line in test:
@@ -173,14 +205,69 @@ with open("example3.igc",'r') as test:
     print(len(coords))
     
     cleaned = []
+    count = 0
     for line in coords:
-        filler = [float(line[0:7])/100000,float(line[8:16])/100000]
+        filler = [float(line[0:2])+float(line[2:7])/60000, float(line[8:11])+float(line[11:16])/60000]
         cleaned.append(filler)
+        # if count <5:
+        #     print(line)
+        #     print(line[0:2])
+        #     print(line[2:7])
+        #     print(float(line[2:7])/60000)
+        #     print(line[8:11])
+        #     print(line[11:16])
+        #     print(float(line[11:16])/60000)
+        #     print(filler)
+        count = count +1
     print(len(cleaned))
     print('coords ', coords[49])
     print('cleaned ', cleaned[49])
     cleaned.append(cleaned[-1])
     print(len(cleaned))
-    print(polylabel([cleaned]))
+    print(cleaned[1])
+
+    x=[]
+    y=[]
+    x2=[]
+    y2=[]
+
+    for line in cleaned:
+        x.append(line[1])
+        y.append(line[0])
+    
+    for line in cleaned:
+        x2.append(line[1])
+        y2.append(line[0])
+    
+    
+    # plt.scatter(x,y, c='b', marker='x', label='1')
+    
+
+    # ax1.scatter(x2,y2, c='r', marker='s', label='-1')
+    # plt.legend(loc='upper left')
+    # plt.show()
+    results = polylabel([cleaned])
+    print(results)
+    radius = results[2]*(110.567 + (results[0]/90 * (111.699 - 110.567)))
+    print('circle radius is ', radius,'km ', 'circumfrence is ', 2*pi*radius,'km')
+    def xy(h,k,r,phi):
+        return h + r*np.cos(phi), k + r*np.sin(phi)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111,aspect='equal')  
+
+    phis=np.arange(0,6.28,0.01)
+    ax.scatter(x,y, c='b', s=1, label='1')
+    r =results[2]
+    ax.plot( *xy(results[1],results[0],r,phis), c='r',ls='-' )
+    bill = plt.gca()
+    bill.set_ylim(results[0]-1.1*results[2],results[0]+1.1*results[2])
+    bill.set_xlim(results[1]-1.1*results[2],results[1]+1.1*results[2])
+    # plt.show()
+    plt.savefig('precis01.png')
+    # circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
+    # plt.gcf().gca().add_artist(circle1)
+    # plt.show()
+     
     print('done')
     
