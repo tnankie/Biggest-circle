@@ -1,7 +1,8 @@
 import os
 print(os.getcwd())
 print(os.listdir())
-import re       
+import re
+import math
 from math import sqrt
 import time
 from queue import PriorityQueue
@@ -10,6 +11,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import pi
 
+a = 6378137
+f = 1/298.257223563
+b = a*(1-f)
+e = ((a**2 - b**2)/a**2)**0.5
+eprime = ((a**2 - b**2)/b**2)**0.5
+
+phi = 0
+lam = 0
+h = 0
+def xyz(phi,lam,h):
+    phi = phi*pi/180
+    lam = lam*pi/180
+    N = a/((1-((e**2)*math.sin(phi)**2))**.5)
+
+    X = (N + h)*math.cos(phi)*math.cos(lam)
+    Y = (N + h)*math.cos(phi)*math.sin(lam)
+    Z = (((b**2/a**2)*N) +h)*math.sin(phi)
+    return(X,Y,Z)
+
+print(xyz(0,0,0))
+print(xyz(90,180,0))
+
+print('other side ', xyz(-90,-180,0))
 def is_left(P0, P1, P2):
     return (P1[0] - P0[0]) * (P2[1] - P0[1]) - (P2[0] - P0[0]) * (P1[1] - P0[1])
 
@@ -187,7 +211,7 @@ def polylabel(polygon, precision=.1, debug=False):
     bradius = _point_to_polygon_distance(best_cell.x, best_cell.y, polygon)
     return [best_cell.x, best_cell.y, bradius]
 
-with open("example4.igc",'r') as test:
+with open("example3.igc",'r') as test:
     coords = []
     count = 0
     for line in test:
