@@ -210,57 +210,116 @@ def polylabel(polygon, precision=.1, debug=False):
     bradius = _point_to_polygon_distance(best_cell.x, best_cell.y, polygon)
     return [best_cell.x, best_cell.y, bradius]
 
-with open("ex3_sim.cup",'r') as test:
-    coords = []
-    count = 0
-    for line in test:
-        if len(line) >24:
-            if count < 50:
-                print(line[0])
-                print('v check ', line[24])
-                print('coord check ', line[7:24])
-            if line[0] == 'B':
-                if line[24] =='A':
-                    coords.append(line[7:24])
-                    if count < 50:
-                        print('wrote')
-        count = count +1
-    print(len(coords))
-    
-    cleaned = []
-    count = 0
-    for line in coords:
-        filler = [float(line[0:2])+float(line[2:7])/60000, float(line[8:11])+float(line[11:16])/60000]
-        cleaned.append(filler)
-        # if count <5:
-        #     print(line)
-        #     print(line[0:2])
-        #     print(line[2:7])
-        #     print(float(line[2:7])/60000)
-        #     print(line[8:11])
-        #     print(line[11:16])
-        #     print(float(line[11:16])/60000)
-        #     print(filler)
-        count = count +1
-##    print(len(cleaned))
-##    print('coords ', coords[49])
-##    print('cleaned ', cleaned[49])
-    cleaned.append(cleaned[-1])
-##    print(len(cleaned))
-##    print(cleaned[1])
 
-    x=[]
-    y=[]
-    x2=[]
-    y2=[]
+def get_poly(filename):
+    poly =[]
+    with open(filename) as test:
+        coords = []
+        count = 0
+        for line in test:
+            if len(line) > 24:
+                if line[0] == 'B':
+                    if line[24] == 'A':
+                        coords.append(line[7:])
+        print(len(coords))
+        coords.append(coords[0])
+        print(len(coords))
+        print('last point  ', coords[-2])
+        print('first point ',coords[-1])
+        cleaned = []
+        #converting to decimal degrees 
+        for line in coords:
+            lat = int(line[0:2]) + float(line[2:7])/60000
+            alt = int(line[23:28])
+            r_lat =lat
+            if line[7] == 'S':
+                r_lat = 0-lat
+            long = int(line[8:11]) + float(line[11:16])/60000
+            r_long = long
+            if line[16] == 'W':
+                r_long = 0-long
+            #bug checking for correct indexes for conversion
+##            if count <3:
+##                print(lat,line[2:7],float(line[2:7]),line[7])
+##                print(long,line[11:16],float(line[11:16]),line[16])
+##                print(line[23:28])
+            position = [r_lat, r_long, alt]
+            cleaned.append(position)
+            count = count + 1
+        print('last point  ', cleaned[-2])
+        print('first point ', cleaned[-1])    
+        poly = cleaned
+        #convert to xyz from polar co-ordinates
+        euclidian = []
+        for line in cleaned:
+            euclidian.append(xyz(line[0],line[1],line[2]))
+        print('last point  ', euclidian[-2])
+        print('first point ', euclidian[-1])
+        
+    return(poly)
 
-    for line in cleaned:
-        x.append(line[1])
-        y.append(line[0])
-    
-    for line in cleaned:
-        x2.append(line[1])
-        y2.append(line[0])
+pos_files = os.listdir()
+good_files = []
+for file in pos_files:
+##    print(file[-4:]) # error checking file name extension
+    if file[-4:] == '.igc':
+        good_files.append(file)
+get_poly(good_files[0])
+
+
+
+
+##with open("ex3_sim.cup",'r') as test:
+##    coords = []
+##    count = 0
+##    for line in test:
+##        if len(line) >24:
+##            if count < 50:
+##                print(line[0])
+##                print('v check ', line[24])
+##                print('coord check ', line[7:24])
+##            if line[0] == 'B':
+##                if line[24] =='A':
+##                    coords.append(line[7:24])
+##                    if count < 50:
+##                        print('wrote')
+##        count = count +1
+##    print(len(coords))
+##    
+##    cleaned = []
+##    count = 0
+##    for line in coords:
+##        filler = [float(line[0:2])+float(line[2:7])/60000, float(line[8:11])+float(line[11:16])/60000]
+##        cleaned.append(filler)
+##        # if count <5:
+##        #     print(line)
+##        #     print(line[0:2])
+##        #     print(line[2:7])
+##        #     print(float(line[2:7])/60000)
+##        #     print(line[8:11])
+##        #     print(line[11:16])
+##        #     print(float(line[11:16])/60000)
+##        #     print(filler)
+##        count = count +1
+####    print(len(cleaned))
+####    print('coords ', coords[49])
+####    print('cleaned ', cleaned[49])
+##    cleaned.append(cleaned[-1])
+####    print(len(cleaned))
+####    print(cleaned[1])
+##
+##    x=[]
+##    y=[]
+##    x2=[]
+##    y2=[]
+##
+##    for line in cleaned:
+##        x.append(line[1])
+##        y.append(line[0])
+##    
+##    for line in cleaned:
+##        x2.append(line[1])
+##        y2.append(line[0])
     
     
     # plt.scatter(x,y, c='b', marker='x', label='1')
@@ -269,28 +328,30 @@ with open("ex3_sim.cup",'r') as test:
     # ax1.scatter(x2,y2, c='r', marker='s', label='-1')
     # plt.legend(loc='upper left')
     # plt.show()
-    results = polylabel([cleaned])
-    print(results)
-    radius = results[2]*(110.567 + (results[0]/90 * (111.699 - 110.567)))
-    print('circle radius is ', radius,'km ', 'circumfrence is ', 2*pi*radius,'km')
-    def xy(h,k,r,phi):
-        return h + r*np.cos(phi), k + r*np.sin(phi)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111,aspect='equal')  
-
-    phis=np.arange(0,6.28,0.01)
-    ax.scatter(x,y, c='b', s=1, label='1')
-    r =results[2]
-    ax.plot( *xy(results[1],results[0],r,phis), c='r',ls='-' )
-    bill = plt.gca()
-    bill.set_ylim(results[0]-1.1*results[2],results[0]+1.1*results[2])
-    bill.set_xlim(results[1]-1.1*results[2],results[1]+1.1*results[2])
-    plt.show()
-    plt.savefig('precis01_20.png')
-    # circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
-    # plt.gcf().gca().add_artist(circle1)
-    # plt.show()
-     
-    print('done')
+##    results = polylabel([cleaned])
+##    print(results)
+##    radius = results[2]*(110.567 + (results[0]/90 * (111.699 - 110.567)))
+##    print('circle radius is ', radius,'km ', 'circumfrence is ', 2*pi*radius,'km')
+##    def xy(h,k,r,phi):
+##        return h + r*np.cos(phi), k + r*np.sin(phi)
+##
+##    
+### figure plotting to verify and visualise results
+##    fig = plt.figure()
+##    ax = fig.add_subplot(111,aspect='equal')  
+##
+##    phis=np.arange(0,6.28,0.01)
+##    ax.scatter(x,y, c='b', s=1, label='1')
+##    r =results[2]
+##    ax.plot( *xy(results[1],results[0],r,phis), c='r',ls='-' )
+##    bill = plt.gca()
+##    bill.set_ylim(results[0]-1.1*results[2],results[0]+1.1*results[2])
+##    bill.set_xlim(results[1]-1.1*results[2],results[1]+1.1*results[2])
+##    plt.show()
+##    plt.savefig('precis01_20.png')
+##    # circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
+##    # plt.gcf().gca().add_artist(circle1)
+##    # plt.show()
+##     
+##    print('done')
     
