@@ -52,9 +52,9 @@ def wn_PnPoly(P, V):
             if V[i+1][1] <= P[1]:    # a downward crossing
                 if is_left(V[i], V[i+1], P) < 0: # P right of edge
                     wn -= 1           # have a valid down intersect
-    print('point is ', P)
-    
-    print('wn is ', wn)
+##    print('point is ', P)
+##    
+##    print('wn is ', wn)
 
     return wn
 
@@ -221,12 +221,13 @@ def get_poly(filename):
                 if line[0] == 'B':
                     if line[24] == 'A':
                         coords.append(line[7:])
-        print(len(coords))
+##        print(len(coords))
         coords.append(coords[0])
-        print(len(coords))
-        print('last point  ', coords[-2])
-        print('first point ',coords[-1])
+##        print(len(coords))
+##        print('last point  ', coords[-2])
+##        print('first point ',coords[-1])
         cleaned = []
+        
         #converting to decimal degrees 
         for line in coords:
             lat = int(line[0:2]) + float(line[2:7])/60000
@@ -248,15 +249,80 @@ def get_poly(filename):
             count = count + 1
         print('last point  ', cleaned[-2])
         print('first point ', cleaned[-1])    
-        poly = cleaned
+        
+        
+        #find average position
+        sum_lat = 0
+        for i in cleaned:
+            sum_lat = sum_lat +i[0]
+        ave_lat = sum_lat/len(cleaned)
+
+        sum_long = 0
+        for i in cleaned:
+            sum_long = sum_long +i[1]
+        ave_long = sum_long/len(cleaned)
+
+        sum_alt = 0
+        for i in cleaned:
+            sum_alt = sum_alt +i[2]
+        ave_alt = sum_alt/len(cleaned)
+
+        ave_pos = [ave_lat, ave_long, ave_alt]
+        print("Average position ", ave_lat, ave_long, ave_alt)
+
+        
         #convert to xyz from polar co-ordinates
         euclidian = []
         for line in cleaned:
             euclidian.append(xyz(line[0],line[1],line[2]))
-        print('last point  ', euclidian[-2])
-        print('first point ', euclidian[-1])
+##        print('last point  ', euclidian[-2])
+##        print('first point ', euclidian[-1])
+
+        #build 2D plane
+        #generate normal vector centered on average of flight log
+        vec = xyz(ave_lat, ave_long, ave_alt)
+        sum_sqr_vec = ((vec[0]**2) + (vec[1]**2) + (vec[2]**2))**0.5
+        n_vec = [vec[0]/sum_sqr_vec, vec[1]/sum_sqr_vec, vec[2]/sum_sqr_vec]        
+##        print(vec, n_vec)
+        print(n_vec)
+        #find smallest component and zero, flip remaining, negate one
+        abs_n_vec = []
+        indexes = [0,1,2]
+        for i in n_vec:
+            abs_n_vec.append(abs(i))
+##        print(abs_n_vec)
+        smallest = abs_n_vec.index(min(abs_n_vec))
+        print(smallest)
+        print(indexes)
+        indexes.pop(smallest)
+        print(indexes)
+        help_vec = [0, 0, 0]
+        help_vec[indexes[0]] = -1*n_vec[indexes[1]]
+        help_vec[indexes[1]] = n_vec[indexes[0]]
+        print(help_vec)
+        axis_a = np.cross(n_vec, help_vec)
+        axis_b = np.cross(n_vec, axis_a)
+        print(axis_a, axis_b)
+
+        #test orthongonality of axis a,b,normal
+        print(np.dot(n_vec, axis_a), np.dot(n_vec, axis_b), np.dot(axis_b, axis_a))
+        #transform euclidean points
+        poly = []
+        for i in euclidian:
+            dif = [0,0,0]
+            for b in range(3):
+                dif[b] = i[b] - vec[b]
+            
+            t1 = np.dot(axis_a, dif)
+            t2 = np.dot(axis_b, dif)
+            poly.append([t1, t2])
+        print(poly[0])
+        print(len(poly), len(cleaned))
+            
         
-    return(poly)
+        
+        
+    return(poly, axis_a, axis_b)
 
 pos_files = os.listdir()
 good_files = []
@@ -264,8 +330,15 @@ for file in pos_files:
 ##    print(file[-4:]) # error checking file name extension
     if file[-4:] == '.igc':
         good_files.append(file)
-get_poly(good_files[0])
+poly_axis = get_poly(good_files[0])
+print(len(poly_axis[0]))
+beef = poly_axis[0]
+print(len(beef))
 
+results  = polylabel([beef])
+print(results)
+radius = results[2]*(110.567 + (results[0]/90 * (111.699 - 110.567)))
+print('circle radius is ', radius,'km ', 'circumfrence is ', 2*pi*radius,'km')
 
 
 
