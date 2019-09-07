@@ -39,32 +39,37 @@ def is_left(P0, P1, P2):
 
 def wn_PnPoly(P, V):
     wn = 0   # the winding number counter
-    print('now in the wn function, here is the point', P)
-    print(V)
+    #print('now in the wn function, here is the point', P)
+    #print(V)
     # repeat the first vertex at end
     # V = tuple(V[:]) + (V[0],)
-    print(V)
+    #print(V)
 
 
     # loop through all edges of the polygon
-    print('length of V ', len(V))
+    #print('length of V ', len(V))
+    #print('type of V:', type(V))
+    #print(V[0])
+    #print('type of V[0]:', type(V[0]))
+    V = V[0]
+    #print('length of V ', len(V))
     count = 0
     for i in range(len(V)-1):     # edge from V[i] to V[i+1]
         count= count + 1
         if V[i][1] <= P[1]:        # start y <= P[1]
             if V[i+1][1] > P[1]:     # an upward crossing
                 if is_left(V[i], V[i+1], P) > 0: # P left of edge
-                    print('crossed upward')
+                    #print('crossed upward')
                     wn += 1           # have a valid up intersect
         else:                      # start y > P[1] (no test needed)
             if V[i+1][1] <= P[1]:    # a downward crossing
                 if is_left(V[i], V[i+1], P) < 0: # P right of edge
                     wn -= 1           # have a valid down intersect
-                    print('crossed downward')
+                    #print('crossed downward')
 ##    print('point is ', P)
 ##  
-    print('count is ', count)  
-    print('wn is ', wn)
+    #print('count is ', count)  
+    #print('wn is ', wn)
 
     return wn
 
@@ -88,11 +93,13 @@ def _point_to_polygon_distance(x, y, polygon):
 
     result = sqrt(min_dist_sq)
     point = [x,y]
+    #print(result)
     if wn_PnPoly(point, polygon) == 0:
+                #print('outside')
                 inside = not inside
-    
-    if not inside:
-        return -result
+                result = -result
+    #print(result)
+ 
     return result
 
 
@@ -142,14 +149,14 @@ def _get_centroid_cell(polygon):
         b = a
     if area == 0:
         return Cell(points[0][0], points[0][1], 0, polygon)
-    print('centroid cell')
-    print(x / area, y / area, area)
+    #print('centroid cell')
+    #print(x / area, y / area, area)
     return Cell(x / area, y / area, 0, polygon)
 
     pass
 
 
-def polylabel(polygon, precision=1, debug=True):
+def polylabel(polygon, precision=0.1, debug=True):
     # find bounding box
 
     first_item = polygon[0][0]
@@ -173,7 +180,7 @@ def polylabel(polygon, precision=1, debug=True):
     height = max_y - min_y
     print('height, width, h')
     cell_size = min(width, height)
-    divisor = 4
+    divisor = 2
     h = cell_size / divisor
     print(height, width, h)
     cell_queue = PriorityQueue()
@@ -192,7 +199,7 @@ def polylabel(polygon, precision=1, debug=True):
         x += h
 
     best_cell = _get_centroid_cell(polygon)
-    print(type(best_cell), best_cell.h, best_cell.x, best_cell.y)
+    #print(type(best_cell), best_cell.h, best_cell.x, best_cell.y)
 
     bbox_cell = Cell(min_x + width / divisor, min_y + height / divisor, 0, polygon)
     if bbox_cell.d > best_cell.d:
@@ -352,7 +359,7 @@ for file in pos_files:
         good_files.append(file)
 
 print(good_files)
-poly_axis = get_poly(good_files[-1])
+poly_axis = get_poly(good_files[2])
 print(len(poly_axis[0]))
 beef = poly_axis[0]
 print(len(beef))
