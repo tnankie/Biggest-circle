@@ -10,6 +10,7 @@ from math import inf
 import matplotlib.pyplot as plt
 import numpy as np
 from math import pi
+import sys
 
 # curvature of the earth constants used to define the wgs84 elipsoid
 a = 6378137
@@ -54,7 +55,7 @@ def wn_PnPoly(P, V):
                     wn -= 1           # have a valid down intersect
 ##    print('point is ', P)
 ##    
-##    print('wn is ', wn)
+    print('wn is ', wn)
 
     return wn
 
@@ -63,7 +64,7 @@ def wn_PnPoly(P, V):
 def _point_to_polygon_distance(x, y, polygon):
     inside = False
     min_dist_sq = inf
-
+    print(x, y, polygon)
     for ring in polygon:
         b = ring[-1]
         for a in ring:
@@ -80,6 +81,7 @@ def _point_to_polygon_distance(x, y, polygon):
     point = [x,y]
     if wn_PnPoly(point,polygon) == 0:
                 inside = not inside
+    sys.exit()
     if not inside:
         return -result
     return result
@@ -131,13 +133,16 @@ def _get_centroid_cell(polygon):
         b = a
     if area == 0:
         return Cell(points[0][0], points[0][1], 0, polygon)
+    print('centroid cell')
+    print(x / area, y / area, area)
     return Cell(x / area, y / area, 0, polygon)
 
     pass
 
 
-def polylabel(polygon, precision=.1, debug=False):
+def polylabel(polygon, precision=1, debug=True):
     # find bounding box
+
     first_item = polygon[0][0]
     min_x = first_item[0]
     min_y = first_item[1]
@@ -152,12 +157,16 @@ def polylabel(polygon, precision=.1, debug=False):
             max_x = p[0]
         if p[1] > max_y:
             max_y = p[1]
-
+    print('min max X then Y')
+    print(min_x, max_x)
+    print(min_y, max_y)
     width = max_x - min_x
     height = max_y - min_y
+    print('height, width, h')
     cell_size = min(width, height)
-    h = cell_size / 2.0
-
+    divisor = 4
+    h = cell_size / divisor
+    print(height, width, h)
     cell_queue = PriorityQueue()
 
     if cell_size == 0:
@@ -169,13 +178,14 @@ def polylabel(polygon, precision=.1, debug=False):
         y = min_y
         while y < max_y:
             c = Cell(x + h, y + h, h, polygon)
-            y += cell_size
+            y += h
             cell_queue.put((-c.max, time.time(), c))
-        x += cell_size
+        x += h
 
     best_cell = _get_centroid_cell(polygon)
+    print(type(best_cell), best_cell.h, best_cell.x, best_cell.y)
 
-    bbox_cell = Cell(min_x + width / 2, min_y + height / 2, 0, polygon)
+    bbox_cell = Cell(min_x + width / divisor, min_y + height / divisor, 0, polygon)
     if bbox_cell.d > best_cell.d:
         best_cell = bbox_cell
 
@@ -193,7 +203,7 @@ def polylabel(polygon, precision=.1, debug=False):
         if cell.max - best_cell.d <= precision:
             continue
 
-        h = cell.h / 2
+        h = cell.h / divisor
         c = Cell(cell.x - h, cell.y - h, h, polygon)
         cell_queue.put((-c.max, time.time(), c))
         c = Cell(cell.x + h, cell.y - h, h, polygon)
@@ -338,7 +348,7 @@ print(len(beef))
 results  = polylabel([beef])
 print(results)
 radius = results[2]
-print('circle radius is ', radius,'km ', 'circumfrence is ', 2*pi*radius,'km')
+print('circle radius is ', radius,'m ', 'circumfrence is ', 2*pi*radius,'m')
 x=[]
 y=[]
 x2=[]
