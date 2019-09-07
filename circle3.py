@@ -337,8 +337,50 @@ print(len(beef))
 
 results  = polylabel([beef])
 print(results)
-radius = results[2]*(110.567 + (results[0]/90 * (111.699 - 110.567)))
+radius = results[2]
 print('circle radius is ', radius,'km ', 'circumfrence is ', 2*pi*radius,'km')
+x=[]
+y=[]
+x2=[]
+y2=[]
+
+for line in beef:
+    x.append(line[1])
+    y.append(line[0])
+    
+for line in beef:
+     x2.append(line[1])
+     y2.append(line[0])
+   
+    
+plt.scatter(x,y, c='b', marker='x', label='1')
+    
+
+##ax1.scatter(x2,y2, c='r', marker='s', label='-1')
+plt.legend(loc='upper left')
+plt.show()
+def xy(h,k,r,phi):
+    return h + r*np.cos(phi), k + r*np.sin(phi)
+
+    
+# figure plotting to verify and visualise results
+fig = plt.figure()
+ax = fig.add_subplot(111,aspect='equal')  
+
+phis=np.arange(0,6.28,0.01)
+ax.scatter(x,y, c='b', s=1, label='1')
+r =results[2]
+ax.plot( *xy(results[1],results[0],r,phis), c='r',ls='-' )
+bill = plt.gca()
+bill.set_ylim(results[0]-1.1*results[2],results[0]+1.1*results[2])
+bill.set_xlim(results[1]-1.1*results[2],results[1]+1.1*results[2])
+plt.show()
+plt.savefig('precis01_euclid.png')
+# circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
+# plt.gcf().gca().add_artist(circle1)
+# plt.show()
+     
+print('done')
 
 
 
