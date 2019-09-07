@@ -359,7 +359,7 @@ for file in pos_files:
         good_files.append(file)
 
 print(good_files)
-poly_axis = get_poly(good_files[0])
+poly_axis = get_poly(good_files[2])
 print(len(poly_axis[0]))
 beef = poly_axis[0]
 print(len(beef))
@@ -380,10 +380,8 @@ for line in beef:
 for line in beef:
     x2.append(line[1])
     y2.append(line[0])
-   
-    plt.scatter(x,y, c='b', marker='x', label='1')
-    
 
+plt.scatter(x,y, c='b', marker='x', label='1')
 #ax1.scatter(x2,y2, c='r', marker='s', label='-1')
 plt.legend(loc='upper left')
 plt.show()
@@ -403,10 +401,10 @@ bill = plt.gca()
 bill.set_ylim(results[0]-1.1*results[2],results[0]+1.1*results[2])
 bill.set_xlim(results[1]-1.1*results[2],results[1]+1.1*results[2])
 plt.show()
-#plt.savefig('precis01_euclid.png')
-# circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
-# plt.gcf().gca().add_artist(circle1)
-# plt.show()
+plt.savefig('precis01_euclid.png')
+circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
+plt.gcf().gca().add_artist(circle1)
+#plt.show()
      
 print('done')
 
