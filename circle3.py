@@ -39,22 +39,31 @@ def is_left(P0, P1, P2):
 
 def wn_PnPoly(P, V):
     wn = 0   # the winding number counter
-
+    print('now in the wn function, here is the point', P)
+    print(V)
     # repeat the first vertex at end
-##    V = tuple(V[:]) + (V[0],)
+    # V = tuple(V[:]) + (V[0],)
+    print(V)
+
 
     # loop through all edges of the polygon
+    print('length of V ', len(V))
+    count = 0
     for i in range(len(V)-1):     # edge from V[i] to V[i+1]
+        count= count + 1
         if V[i][1] <= P[1]:        # start y <= P[1]
             if V[i+1][1] > P[1]:     # an upward crossing
                 if is_left(V[i], V[i+1], P) > 0: # P left of edge
+                    print('crossed upward')
                     wn += 1           # have a valid up intersect
         else:                      # start y > P[1] (no test needed)
             if V[i+1][1] <= P[1]:    # a downward crossing
                 if is_left(V[i], V[i+1], P) < 0: # P right of edge
                     wn -= 1           # have a valid down intersect
+                    print('crossed downward')
 ##    print('point is ', P)
-##    
+##  
+    print('count is ', count)  
     print('wn is ', wn)
 
     return wn
@@ -64,7 +73,7 @@ def wn_PnPoly(P, V):
 def _point_to_polygon_distance(x, y, polygon):
     inside = False
     min_dist_sq = inf
-    print(x, y, polygon)
+    
     for ring in polygon:
         b = ring[-1]
         for a in ring:
@@ -79,9 +88,9 @@ def _point_to_polygon_distance(x, y, polygon):
 
     result = sqrt(min_dist_sq)
     point = [x,y]
-    if wn_PnPoly(point,polygon) == 0:
+    if wn_PnPoly(point, polygon) == 0:
                 inside = not inside
-    sys.exit()
+    
     if not inside:
         return -result
     return result
@@ -336,11 +345,14 @@ def get_poly(filename):
 
 pos_files = os.listdir()
 good_files = []
+
 for file in pos_files:
 ##    print(file[-4:]) # error checking file name extension
     if file[-4:] == '.igc':
         good_files.append(file)
-poly_axis = get_poly(good_files[0])
+
+print(good_files)
+poly_axis = get_poly(good_files[-1])
 print(len(poly_axis[0]))
 beef = poly_axis[0]
 print(len(beef))
