@@ -359,7 +359,7 @@ for file in pos_files:
         good_files.append(file)
 
 print(good_files)
-poly_axis = get_poly(good_files[2])
+poly_axis = get_poly(good_files[0])
 print(len(poly_axis[0]))
 beef = poly_axis[0]
 print(len(beef))
