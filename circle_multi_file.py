@@ -1,6 +1,4 @@
 import os
-print(os.getcwd())
-print(os.listdir())
 import re
 import math
 from math import sqrt
@@ -153,10 +151,7 @@ def _get_centroid_cell(polygon):
     #print(x / area, y / area, area)
     return Cell(x / area, y / area, 0, polygon)
 
-    pass
-
-
-def polylabel(polygon, precision=0.1, debug=True):
+def polylabel(polygon, precision=10, debug=True):
     # find bounding box
 
     first_item = polygon[0][0]
@@ -173,16 +168,16 @@ def polylabel(polygon, precision=0.1, debug=True):
             max_x = p[0]
         if p[1] > max_y:
             max_y = p[1]
-    print('min max X then Y')
-    print(min_x, max_x)
-    print(min_y, max_y)
+    #print('min max X then Y')
+    #print(min_x, max_x)
+    #print(min_y, max_y)
     width = max_x - min_x
     height = max_y - min_y
-    print('height, width, h')
+    #print('height, width, h')
     cell_size = min(width, height)
     divisor = 2
     h = cell_size / divisor
-    print(height, width, h)
+    #print(height, width, h)
     cell_queue = PriorityQueue()
 
     if cell_size == 0:
@@ -273,8 +268,8 @@ def get_poly(filename):
             position = [r_lat, r_long, alt]
             cleaned.append(position)
             count = count + 1
-        print('last point  ', cleaned[-2])
-        print('first point ', cleaned[-1])    
+        #print('last point  ', cleaned[-2])
+        #print('first point ', cleaned[-1])    
         
         
         #find average position
@@ -294,7 +289,7 @@ def get_poly(filename):
         ave_alt = sum_alt/len(cleaned)
 
         ave_pos = [ave_lat, ave_long, ave_alt]
-        print("Average position ", ave_lat, ave_long, ave_alt)
+        #print("Average position ", ave_lat, ave_long, ave_alt)
 
         
         #convert to xyz from polar co-ordinates
@@ -310,7 +305,7 @@ def get_poly(filename):
         sum_sqr_vec = ((vec[0]**2) + (vec[1]**2) + (vec[2]**2))**0.5
         n_vec = [vec[0]/sum_sqr_vec, vec[1]/sum_sqr_vec, vec[2]/sum_sqr_vec]        
 ##        print(vec, n_vec)
-        print(n_vec)
+        #print(n_vec)
         #find smallest component and zero, flip remaining, negate one
         abs_n_vec = []
         indexes = [0,1,2]
@@ -318,20 +313,20 @@ def get_poly(filename):
             abs_n_vec.append(abs(i))
 ##        print(abs_n_vec)
         smallest = abs_n_vec.index(min(abs_n_vec))
-        print(smallest)
-        print(indexes)
+        #print(smallest)
+        #print(indexes)
         indexes.pop(smallest)
-        print(indexes)
+        #print(indexes)
         help_vec = [0, 0, 0]
         help_vec[indexes[0]] = -1*n_vec[indexes[1]]
         help_vec[indexes[1]] = n_vec[indexes[0]]
-        print(help_vec)
+        #print(help_vec)
         axis_a = np.cross(n_vec, help_vec)
         axis_b = np.cross(n_vec, axis_a)
-        print(axis_a, axis_b)
+        #print(axis_a, axis_b)
 
         #test orthongonality of axis a,b,normal
-        print(np.dot(n_vec, axis_a), np.dot(n_vec, axis_b), np.dot(axis_b, axis_a))
+        #print(np.dot(n_vec, axis_a), np.dot(n_vec, axis_b), np.dot(axis_b, axis_a))
         #transform euclidean points
         poly = []
         for i in euclidian:
@@ -342,8 +337,8 @@ def get_poly(filename):
             t1 = np.dot(axis_a, dif)
             t2 = np.dot(axis_b, dif)
             poly.append([t1, t2])
-        print(poly[0])
-        print(len(poly), len(cleaned))
+        #print(poly[0])
+        #print(len(poly), len(cleaned))
             
         
         
@@ -359,51 +354,18 @@ for file in pos_files:
         good_files.append(file)
 
 print(good_files)
-poly_axis = get_poly(good_files[-1])
-print(len(poly_axis[0]))
-beef = poly_axis[0]
-print(len(beef))
+best_radius = 0
+best_file_index = 0
+for i in range(len(good_files)):
+    print(i)
+    print(good_files[i])
+    poly_axis = get_poly(good_files[i])
+    poly = poly_axis[0]
+    test = polylabel([poly])
+    if test[2] > best_radius:
+        best_radius = test[2]
+        best_file_index = i
 
-results  = polylabel([beef])
-print(results)
-radius = results[2]
-print('circle radius is ', radius,'m ', 'circumfrence is ', 2*pi*radius,'m')
-x=[]
-y=[]
-x2=[]
-y2=[]
-
-for line in beef:
-    x.append(line[1])
-    y.append(line[0])
-    
-for line in beef:
-    x2.append(line[1])
-    y2.append(line[0])
-
-plt.scatter(x,y, c='b', marker='x', label='1')
-#ax1.scatter(x2,y2, c='r', marker='s', label='-1')
-plt.legend(loc='upper left')
-plt.show()
-def xy(h,k,r,phi):
-    return h + r*np.cos(phi), k + r*np.sin(phi)
-
-    
-# figure plotting to verify and visualise results
-fig = plt.figure()
-ax = fig.add_subplot(111,aspect='equal')  
-
-phis=np.arange(0,6.28,0.01)
-ax.scatter(x,y, c='b', s=1, label='1')
-r =results[2]
-ax.plot( *xy(results[1],results[0],r,phis), c='r',ls='-' )
-bill = plt.gca()
-bill.set_ylim(results[0]-1.1*results[2],results[0]+1.1*results[2])
-bill.set_xlim(results[1]-1.1*results[2],results[1]+1.1*results[2])
-plt.show()
-plt.savefig('precis01_euclid.png')
-circle1 = plt.Circle((results[0],results[1]), results[2], color='r')
-plt.gcf().gca().add_artist(circle1)
-#plt.show()
-     
+print("best radius is ", best_radius)
+print("best file is ", good_files[best_file_index] )
 print('done')
